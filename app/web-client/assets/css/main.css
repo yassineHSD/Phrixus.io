@@ -1,0 +1,39 @@
+.input-group-text{
+  border-top-right-radius: 0px;
+  border-bottom-right-radius: 0px;
+  font-size: 12px;
+  color: #242424 !important;
+}
+.font-weight-bold{
+  font-weight: bold !important;
+}
+.my-custom-scrollbar {
+  position: relative;
+  height: 200px;
+  overflow: auto;
+  }
+.table-wrapper-scroll-y {
+display: block;
+}
+.control-form{
+  background-color: #f5f5f5 !important;
+  padding: 5px;
+}
+hr {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  border: 0;
+  border-top: 2px solid rgba(0, 0, 0, 0.1);
+}
+.logo{
+  height: 150px;
+}
+.navbar{
+  border-top: 1px solid #dedede;
+}
+.navbar-brand{
+  font-weight: bold;
+  padding-left: 5px;
+  padding-right: 10px;
+  border-right: 1px solid #dedede;
+}

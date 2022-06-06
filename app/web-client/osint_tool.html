@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Phrixus.io</title>
+    <!-- CSS only -->
+    <!-- JavaScript Bundle with Popper -->
+<!-- CSS only -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="assets/css/main.css">
+
+  </head>
+  <body>
+    <div class="container-fluid">
+      <form>
+        <div class="row">
+          <div class="col-2 control-form vh-100">
+            <div class="row">
+              <div class="col text-center">
+                <h3 class="title h1 font-weight-bold">Phrixus.io</h3>
+                <svg class="logo" data-name="Layer 3" id="Layer_3" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><defs><style>.cls-1{fill:#0832ff;}</style></defs><title/><path class="cls-1" d="M16,25.47c-7.53,0-13.41-8.54-13.66-8.91L2,16l.38-.56C2.59,15.07,8.47,6.53,16,6.53s13.41,8.54,13.66,8.91L30,16l-.38.56C29.41,16.93,23.53,25.47,16,25.47ZM4.41,16C5.8,17.82,10.55,23.47,16,23.47S26.2,17.83,27.59,16C26.2,14.18,21.45,8.53,16,8.53S5.8,14.17,4.41,16Z"/><path class="cls-1" d="M16,11a4.14,4.14,0,0,0-.48,0,.34.34,0,0,0-.31.33.34.34,0,0,0,.1.24h0a2.59,2.59,0,0,1,.74,1.8A2.63,2.63,0,0,1,13.42,16a2.58,2.58,0,0,1-1.78-.72h0a.35.35,0,0,0-.6.18A4.13,4.13,0,0,0,11,16a5,5,0,1,0,5-5Z"/></svg>
+                <div class="input-group input-group-sm mb-3">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text" id="inputGroup-sizing-sm">Domain/IP</span>
+                  </div>
+                  <input type="search" id="domain" placeholder="Domain" size="50" value="" class="form-control" aria-label="IP adress/hostname" aria-describedby="inputGroup-sizing-sm" placeholder="Domain/IP">
+                </div>
+              </div>
+
+            </div>
+            <div class="row">
+              <div class="col">
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" name="target" id="t1" value="1">
+                  <label class="form-check-label" for="t1">
+                    Domains
+                  </label>
+                </div>
+                <div class="form-check">
+                  <input checked class="form-check-input" type="radio" name="target" id="t2" value="2" checked>
+                  <label class="form-check-label" for="t2">
+                    Email Adresses
+                  </label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" name="target" id="t3" value="3">
+                  <label class="form-check-label" for="t3">
+                    URLs
+                  </label>
+                </div>
+              </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              <button class="btn btn-primary w-100" type="submit" id="submit1" >Scan</button>
+            </div>
+          </div>
+          <a id="dwn-btn" href="#">Download TXT</a>
+          </div>
+          <div class="col">
+              <div class="row">
+                <div class="col">
+                  <div class="result">
+                    <pre id="result"></pre>
+                  </div>
+
+                </div>
+              </div>
+          </div>
+        </div>
+      </form>
+    </div>
+    <nav class="fixed-bottom navbar navbar-expand-lg navbar-light bg-light">
+      <a class="navbar-brand" href="#">Navigation</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="index.html">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="vuln_scanner.html">Vulnerabilities scanner</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active font-weight-bold" href="osint_tool.html">OSINT tool</a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+  </body>
+  <script>
+      var API_KEY = '077424c6-7a26-410e-9269-c9ac546886a4';
+      var API_URL = 'https://public.intelx.io/';
+
+      apiGet = function apiGet(url, parameters, success, error) {
+          $.ajax({
+              type: 'GET',
+              url: API_URL + url + "?k=" + API_KEY + parameters,
+              success: success,
+              error: error
+          });
+      }
+
+      apiPost = function apiPost(url, data, success, error) {
+          $.ajax({
+              type: 'POST',
+              url: API_URL + url + "?k=" + API_KEY,
+              data: data,
+              success: success,
+              error: error
+          });
+      }
+
+      var lastid;
+      var element_string=""
+
+      function apiSearchResult(id) {
+          apiGet('phonebook/search/result', "&id=" + id + "&limit=10000",
+              function(p) {
+                  if (!!p && p.selectors.length > 0) {
+                      $.each(p.selectors, function(i, selector) {
+                          $('#result').append('<a href="https://intelx.io?s=' + selector['selectorvalue'] + '" target="_blank">' + selector['selectorvalueh'] + '</a>\n');
+                          element_string+=selector['selectorvalueh']+'\n';
+                      });
+                  }
+
+                  if (p.status == 0 || p.status == 3) {
+                      setTimeout(function() {
+                          apiSearchResult(id)
+                      }, 1000);
+                  } else {
+                      $('#result').append('No more results.');
+                  }
+              },
+              function(error) {
+                  $('#result').append('Unknown error.');
+              }
+          );
+      }
+
+      $(document).on('click', '#submit1', function(event) {
+          event.preventDefault();
+
+          if ($('#domain').val() == '') {
+              return;
+          }
+
+          apiPost('phonebook/search',
+              JSON.stringify({
+                  term: $('#domain').val(),
+                  maxresults: 10000,
+                  media: 0,
+                  target: parseInt(document.querySelector('input[name="target"]:checked').value, 10),
+                  terminate: [!!lastid ? lastid : null],
+                  timeout: 20,
+              }),
+              function(p) {
+                  if (p.status == 1) {
+                      $('#result').html('Invalid search term.');
+                      return
+                  } else if (p.status == 2) {
+                      $('#result').html('Error: Max concurrent searches reached.');
+                      return
+                  }
+                  lastid = p.id
+                  $('#result').html("");
+                  apiSearchResult(p.id)
+              },
+              function(error) {
+                  if (error.status == 402) {
+                      $('#result').html('Daily limit reached. Please contact <a href="mailto:info@intelx.io?subject=Phonebook">info@intelx.io</a> for a license or visit <a href="https://intelx.io/product">https://intelx.io/product</a>.');
+                  } else if (error.status == 403) {
+                      $('#result').html('Access denied. Your IP is blacklisted. If you are using Tor, <a href="https://blog.intelx.io/2020/07/05/why-we-are-going-to-block-tor-ips/">read this</a>.');
+                  } else {
+                      $('#result').html('Unknown Error');
+                  }
+              }
+          );
+      });
+
+      $(document).on('click', 'a.link', function(event) {
+          document.getElementById('domain').value = event.target.text;
+          document.getElementById('t2').checked = true;
+          document.getElementById("submit1").click();
+          return false;
+      });
+
+      function getUrlVars() {
+          var vars = {};
+          var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m, key, value) {
+              vars[key] = value;
+          });
+          return vars;
+      }
+
+      function getUrlParam(parameter, defaultvalue) {
+          var urlparameter = getUrlVars()[parameter];
+          if (urlparameter === undefined) {
+              return defaultvalue
+          }
+          return urlparameter;
+      }
+
+      $(document).ready(function() {
+          var s = getUrlParam('s', '');
+          var t = getUrlParam('t', 2);
+          if (s != '') {
+              document.getElementById('domain').value = s;
+              if (t == 1) {
+                  document.getElementById('t1').checked = true;
+              } else if (t == 2) {
+                  document.getElementById('t2').checked = true;
+              } else if (t == 3) {
+                  document.getElementById('t3').checked = true;
+              }
+              document.getElementById("submit1").click();
+          }
+      });
+      function download(filename, text) {
+        var element = document.createElement('a');
+        element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+        element.setAttribute('download', filename);
+
+        element.style.display = 'none';
+        document.body.appendChild(element);
+
+        element.click();
+
+        document.body.removeChild(element);
+    }
+    document.getElementById("dwn-btn").addEventListener("click", function(){
+        // Generate download of hello.txt file with some content
+        var filename = "dump.txt";
+
+        download(filename, element_string);
+    }, false);
+  </script>
+</html>
